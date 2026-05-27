@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Estudiantes</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .acciones-tabla {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 20px;
+            margin-bottom: 15px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+        .btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 14px;
+            display: inline-block;
+        }
+        .btn-actualizar {
+            background-color: #28a745;
+            color: white;
+            font-weight: bold;
+            font-size: 15px;
+            transition: background-color 0.2s;
+        }
+        .btn-actualizar:hover {
+            background-color: #218838;
+        }
+        .btn-editar {
+            background-color: #ffc107;
+            color: black;
+        }
+        .btn-eliminar {
+            background-color: #dc3545;
+            color: white;
+        }
+        .btn-volver {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #007bff;
+            text-decoration: none;
+        }
+        .sin-datos {
+            text-align: center;
+            padding: 30px;
+            color: #666;
+        }
+        .promedio {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+   <div class="container">
+    <h1>Lista de Estudiantes</h1>
+    
+    <div class="acciones-tabla">
+        <button id="btn-actualizar" class="btn btn-actualizar">🔄 Actualizar Lista</button>
+    </div>
+
+    <div id="contenedor-sin-datos" class="sin-datos" style="display: none;">
+        <p>No hay estudiantes registrados en el sistema.</p>
+    </div>
+
+    <table id="tabla-estudiantes" style="display: table;">
+        <thead>
+            <tr>
+                <th>Cédula</th>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Nota 1</th>
+                <th>Nota 2</th>
+                <th>Nota 3</th>
+                <th>Nota 4</th>
+                <th>Promedio</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="contenido-tabla">
+            </tbody>
+    </table>
+    
+    <a href="/" class="btn-volver">← Volver al inicio</a>
+</div>
+
+<script>
+    const btnActualizar = document.getElementById('btn-actualizar');
+    const tabla = document.getElementById('tabla-estudiantes');
+    const contenedorSinDatos = document.getElementById('contenedor-sin-datos');
+    const tbody = document.getElementById('contenido-tabla');
+
+    // Memoria para controlar qué estudiantes ya están dibujados en pantalla
+    const cedulasRenderizadas = new Set();
+
+    // 1. CARGA AUTOMÁTICA AL ENTRAR: Trae solo los estudiantes previos (viejos)
+    async function cargarHistorialPrevio() {
+        try {
+            const respuesta = await fetch('/api/estudiantes');
+            const estudiantes = await respuesta.json();
+
+            if (estudiantes && estudiantes.length > 0) {
+                tbody.innerHTML = estudiantes.map(alumno => {
+                    // Guardamos en memoria para que el botón sepa quiénes ya están
+                    cedulasRenderizadas.add(alumno.ci);
+
+                    return `
+                        <tr id="fila-${alumno.ci}">
+                            <td>${alumno.ci}</td>
+                            <td>${alumno.nombre}</td>
+                            <td>${alumno.apellido}</td>
+                            <td>${alumno.nota1}</td>
+                            <td>${alumno.nota2}</td>
+                            <td>${alumno.nota3}</td>
+                            <td>${alumno.nota4}</td>
+                            <td class="promedio">${alumno.promedio}</td>
+                            <td>
+                                <a href="/editar/${alumno.ci}" class="btn btn-editar">Editar</a>
+                                <a href="/eliminar/${alumno.ci}" class="btn btn-eliminar">Eliminar</a>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            } else {
+                tabla.style.display = 'none';
+                contenedorSinDatos.style.display = 'block';
+            }
+        } catch (error) {
+            console.error('Error al cargar historial:', error);
+        }
+    }
+
+    // 2. BOTÓN ACTUALIZAR: Trae al nuevo estudiante que estaba oculto y lo engancha abajo
+    async function apilarEstudianteNuevo() {
+        btnActualizar.innerText = '⌛ Buscando nuevo...';
+
+        try {
+            const respuesta = await fetch('/api/ultimo-estudiante');
+            if (!respuesta.ok) throw new Error('No hay alumnos nuevos');
+            const alumno = await respuesta.json();
+
+            btnActualizar.innerText = '🔄 Actualizar Lista';
+
+            // Si el alumno nuevo no está en la pantalla, lo agregamos quirúrgicamente al final
+            if (!cedulasRenderizadas.has(alumno.ci)) {
+                tabla.style.display = 'table';
+                contenedorSinDatos.style.display = 'none';
+
+                cedulasRenderizadas.add(alumno.ci);
+
+                const nuevaFila = `
+                    <tr id="fila-${alumno.ci}">
+                        <td>${alumno.ci}</td>
+                        <td>${alumno.nombre}</td>
+                        <td>${alumno.apellido}</td>
+                        <td>${alumno.nota1}</td>
+                        <td>${alumno.nota2}</td>
+                        <td>${alumno.nota3}</td>
+                        <td>${alumno.nota4}</td>
+                        <td class="promedio">${alumno.promedio}</td>
+                        <td>
+                            <a href="/editar/${alumno.ci}" class="btn btn-editar">Editar</a>
+                            <a href="/eliminar/${alumno.ci}" class="btn btn-eliminar">Eliminar</a>
+                        </td>
+                    </tr>
+                `;
+
+                // Lo inserta abajo del todo manteniendo los viejos intactos
+                tbody.insertAdjacentHTML('beforeend', nuevaFila);
+            } else {
+                alert('No se han registrado nuevos estudiantes desde la última actualización.');
+            }
+        } catch (error) {
+            btnActualizar.innerText = '🔄 Actualizar Lista';
+            console.log('Sincronización:', error.message);
+        }
+    }
+
+    // Ejecuciones del flujo solicitado por el profesor:
+    cargarHistorialPrevio(); // 👈 Automático al entrar (Muestra solo los previos)
+    btnActualizar.addEventListener('click', apilarEstudianteNuevo); // 👈 Al hacer clic (Muestra al nuevo)
+</script>
+
+    </body>
+</html>

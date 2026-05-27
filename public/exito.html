@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro Exitoso</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        h1 {
+            color: #28a745;
+        }
+        .datos {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 10px;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>✅ ¡Registro Exitoso!</h1>
+        <div class="datos">
+            <p><strong>Datos del estudiante registrado:</strong></p>
+            <p>Cédula: <strong id="ci"></strong></p>
+            <p>Nombre: <strong id="nombre"></strong></p>
+            <p>Apellido: <strong id="apellido"></strong></p>
+        </div>
+        <a href="/nuevo-alumno" class="btn">Registrar Otro</a>
+        <a href="/estudiantes" class="btn">Ver Lista</a>
+        <br>
+        <a href="/" class="btn" style="background-color: #6c757d;">Volver al Inicio</a>
+    </div> 
+
+    <script>
+        // Leemos las variables enviadas por el servidor desde la URL (?ci=...&nombre=...)
+        const params = new URLSearchParams(window.location.search);
+        
+        // Inyectamos los valores en los contenedores correspondientes del HTML
+        document.getElementById('ci').innerText = params.get('ci') || '';
+        document.getElementById('nombre').innerText = params.get('nombre') || '';
+        document.getElementById('apellido').innerText = params.get('apellido') || '';
+    </script>
+</body>
+</html>

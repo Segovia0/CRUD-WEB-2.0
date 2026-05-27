@@ -1,0 +1,182 @@
+    <!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Estudiantes</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        /* Contenedor para los botones superiores */
+        .acciones-tabla {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+        .btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 14px;
+            display: inline-block;
+        }
+        /* Estilo para el nuevo botón de actualizar */
+        .btn-actualizar {
+            background-color: #28a745;
+            color: white;
+            font-weight: bold;
+            font-size: 15px;
+            transition: background-color 0.2s;
+        }
+        .btn-actualizar:hover {
+            background-color: #218838;
+        }
+        .btn-editar {
+            background-color: #ffc107;
+            color: black;
+        }
+        .btn-eliminar {
+            background-color: #dc3545;
+            color: white;
+        }
+        .btn-volver {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #007bff;
+            text-decoration: none;
+        }
+        .sin-datos {
+            text-align: center;
+            padding: 30px;
+            color: #666;
+        }
+        .promedio {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Lista de Estudiantes</h1>
+        
+        <div class="acciones-tabla">
+            <button id="btn-cargar" class="btn btn-actualizar">🔄 Actualizar Datos</button>
+        </div>
+
+        <div id="contenedor-sin-datos" class="sin-datos">
+            <p>Presiona el botón "Actualizar Datos" para listar los estudiantes del sistema.</p>
+        </div>
+
+        <table id="tabla-estudiantes" style="display: none;">
+            <thead>
+                <tr>
+                    <th>Cédula</th>
+                    <th>Nombre</th>
+                    <th>Apellido</th>
+                    <th>Nota 1</th>
+                    <th>Nota 2</th>
+                    <th>Nota 3</th>
+                    <th>Nota 4</th>
+                    <th>Promedio</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="contenido-tabla">
+                </tbody>
+        </table>
+        
+        <a href="/" class="btn-volver">← Volver al inicio</a>
+    </div>
+
+    <script>
+        const btnCargar = document.getElementById('btn-cargar');
+        const tabla = document.getElementById('tabla-estudiantes');
+        const contenedorSinDatos = document.getElementById('contenedor-sin-datos');
+        const tbody = document.getElementById('contenido-tabla');
+
+        // Función que hace la petición al servidor y renderiza los datos
+        function obtenerEstudiantes() {
+            // Cambiamos temporalmente el texto del botón para feedback visual
+            btnCargar.innerText = '⌛ Cargando...';
+
+            fetch('/api/estudiantes')
+                .then(response => response.json())
+                .then(estudiantes => {
+                    // Restauramos el texto del botón
+                    btnCargar.innerText = '🔄 Actualizar Datos';
+
+                    if (estudiantes && estudiantes.length > 0) {
+                        tabla.style.display = 'table';
+                        contenedorSinDatos.style.display = 'none';
+
+                        tbody.innerHTML = estudiantes.map(alumno => `
+                            <tr>
+                                <td>${alumno.ci}</td>
+                                <td>${alumno.nombre}</td>
+                                <td>${alumno.apellido}</td>
+                                <td>${alumno.nota1}</td>
+                                <td>${alumno.nota2}</td>
+                                <td>${alumno.nota3}</td>
+                                <td>${alumno.nota4}</td>
+                                <td class="promedio">${alumno.promedio}</td>
+                                <td>
+                                    <a href="/editar/${alumno.ci}" class="btn btn-editar">Editar</a>
+                                    <a href="/eliminar/${alumno.ci}" class="btn btn-eliminar" onclick="return confirm('¿Estás seguro de eliminar a este estudiante?')">Eliminar</a>
+                                </td>
+                            </tr>
+                        `).join('');
+                    } else {
+                        tabla.style.display = 'none';
+                        contenedorSinDatos.style.display = 'block';
+                        contenedorSinDatos.innerHTML = '<p>No hay estudiantes registrados aún en la base de datos.</p>';
+                    }
+                })
+                .catch(error => {
+                    btnCargar.innerText = '🔄 Actualizar Datos';
+                    console.error('Error al mapear la lista de estudiantes:', error);
+                    alert('Error al conectar con el servidor.');
+                });
+        }
+
+        // Escuchar el click del botón para ejecutar la función
+        btnCargar.addEventListener('click', obtenerEstudiantes);
+    </script>
+</body>
+</html>

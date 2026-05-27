@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar Nuevo Alumno</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .notas-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background-color: #218838;
+        }
+        .btn-volver {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #007bff;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Registrar Nuevo Alumno</h1>
+        <form id= "mi-formulario">
+            <div class="form-group">
+                <label for="ci">Cédula de Identidad:</label>
+                <input 
+                 type="text" 
+                  id="ci" 
+                  maxlength="8" 
+                  inputmode="numeric" 
+                  pattern="[0-9]+" 
+                  placeholder="Ej. 26123456" 
+                  required
+                    >
+
+            </div>
+            
+            <div class="form-group">
+                <label for="nombre">Nombre:</label>
+                <input type="text" id="nombre" name="nombre" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="apellido">Apellido:</label>
+                <input type="text" id="apellido" name="apellido" required>
+            </div>
+            
+            <h3>Notas</h3>
+            <div class="notas-grid">
+                <div class="form-group">
+                    <label for="nota1">Nota 1:</label>
+                    <input type="number" id="nota1" name="nota1" min="0" max="20" step="0.1" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="nota2">Nota 2:</label>
+                    <input type="number" id="nota2" name="nota2" min="0" max="20" step="0.1" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="nota3">Nota 3:</label>
+                    <input type="number" id="nota3" name="nota3" min="0" max="20" step="0.1" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="nota4">Nota 4:</label>
+                    <input type="number" id="nota4" name="nota4" min="0" max="20" step="0.1" required>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn">Guardar Alumno</button>
+        </form>
+        <a href="/" class="btn-volver">← Volver al inicio</a>
+    </div>
+
+<script>
+    // 1. Agarramos el formulario por su ID (asegúrate de que tu <form> tenga id="mi-formulario")
+    const formulario = document.getElementById('mi-formulario');
+
+    // 2. Interceptamos el evento de envío de forma ASÍNCRONA
+    formulario.addEventListener('submit', async (e) => {
+        e.preventDefault(); // 🚫 ¡CLAVE! Detiene el salto de página tradicional del navegador
+
+        // 3. Recolectamos los datos de los inputs de tu HTML
+        const datos = {
+            ci: Number(document.getElementById('ci').value),
+            nombre: document.getElementById('nombre').value,
+            apellido: document.getElementById('apellido').value,
+            nota1: document.getElementById('nota1').value,
+            nota2: document.getElementById('nota2').value,
+            nota3: document.getElementById('nota3').value,
+            nota4: document.getElementById('nota4').value
+        };
+
+        try {
+            // 4. Enviamos los datos al servidor en segundo plano usando POST de forma asíncrona
+            const respuesta = await fetch('/guardar-alumno', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(datos) // Convertimos el objeto en texto JSON
+            });
+
+            // 5. Procesamos la respuesta del servidor sin mover al usuario de la pantalla
+            if (respuesta.ok) {
+                const resultado = await respuesta.json();
+                alert('¡Estudiante guardado con éxito! Ya puedes ir a la lista a verificar.');
+                formulario.reset(); // Limpia los campos para registrar otro
+            } else {
+                alert('Hubo un error en el servidor al intentar registrar.');
+            }
+
+        } catch (error) {
+            console.error('Error en la petición asíncrona:', error);
+            alert('No se pudo conectar con el servidor.');
+        }
+    });
+</script>
+
+</body>
+</html>

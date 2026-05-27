@@ -1,0 +1,114 @@
+{
+  "estudiantes": [
+    {
+      "ci": 232234234,
+      "nombre": "Calo",
+      "apellido": "barre",
+      "nota1": 12,
+      "nota2": 2,
+      "nota3": 3,
+      "nota4": 2,
+      "promedio": "4.75"
+    },
+    {
+      "ci": 12121323,
+      "nombre": "luis",
+      "apellido": "tal",
+      "nota1": 12,
+      "nota2": 2,
+      "nota3": 3,
+      "nota4": 2,
+      "promedio": "4.75"
+    },
+    {
+      "ci": 34453753,
+      "nombre": "Calo",
+      "apellido": "sego",
+      "nota1": 12,
+      "nota2": 20,
+      "nota3": 1,
+      "nota4": 15,
+      "promedio": "12.00"
+    },
+    {
+      "ci": 12232132,
+      "nombre": "luis",
+      "apellido": "hola",
+      "nota1": 1,
+      "nota2": 2,
+      "nota3": 3,
+      "nota4": 4,
+      "promedio": "2.50"
+    },
+    {
+      "ci": 23446633,
+      "nombre": "Osmira",
+      "apellido": "Chacon",
+      "nota1": 1,
+      "nota2": 2,
+      "nota3": 3,
+      "nota4": 4,
+      "promedio": "2.50"
+    },
+    {
+      "ci": 2121223,
+      "nombre": "jackson",
+      "apellido": "jolaa",
+      "nota1": 1,
+      "nota2": 2,
+      "nota3": 3,
+      "nota4": 4,
+      "promedio": "2.50"
+    },
+    {
+      "ci": 5263637323,
+      "nombre": "Carlos",
+      "apellido": "segovia",
+      "nota1": 1,
+      "nota2": 2,
+      "nota3": 3,
+      "nota4": 4,
+      "promedio": "2.50"
+    },
+    {
+      "ci": 98764343,
+      "nombre": "ana",
+      "apellido": "1234",
+      "nota1": 12,
+      "nota2": 12,
+      "nota3": 2,
+      "nota4": 3,
+      "promedio": "7.25"
+    },
+    {
+      "ci": 343434,
+      "nombre": "hola",
+      "apellido": "derwewe",
+      "nota1": 2,
+      "nota2": 3,
+      "nota3": 3,
+      "nota4": 5,
+      "promedio": "3.25"
+    },
+    {
+      "ci": 1234456,
+      "nombre": "Giovanny",
+      "apellido": "diez",
+      "nota1": 1,
+      "nota2": 2,
+      "nota3": 3,
+      "nota4": 4,
+      "promedio": "2.50"
+    },
+    {
+      "ci": 31588187,
+      "nombre": "wilfredo",
+      "apellido": "alvarez",
+      "nota1": 2,
+      "nota2": 3,
+      "nota3": 5,
+      "nota4": 4,
+      "promedio": "3.50"
+    }
+  ]
+}
